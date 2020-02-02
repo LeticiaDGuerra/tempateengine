@@ -1,8 +1,7 @@
-var questions = require("inquirer");
-var HTML= require("./lib/generateHTML")
+const inquirer = require("inquirer");
+const HTML= require("./lib/generateHTML")
 
-questions
-  .prompt([
+const questions = [
     {
       type: "input",
       message: "What is your name?",
@@ -44,14 +43,47 @@ questions
       type: "input",
       message: "What is your ID #",
       name: "ID"
-    },
-  ])
-  .then(function(response) {
-
-    if (response.method === response.list) {
-      console.log("Success!");
     }
-    else {
-      console.log("Wrong, sir!");
-    }
-  });
+];
+function writeToFile(fileName, data) {
+    return fs.writeFileSync(path.join(process.cwd(), fileName), data);
+  }
+  
+  function init() {
+    inquirer.prompt(questions).then(({}) => {
+      console.log(questions[0]);
+  
+    //   api
+    //     .getUser(github)
+    //     .then(response =>
+    //       api.getTotalStars(github).then(stars => {
+    //         return generateHTML({
+    //           stars,
+    //           color,
+    //           ...response.data
+    //         });
+    //       })
+    //     )
+        // .then(html => {
+        //   const conversion = convertFactory({
+        //     converterPath: convertFactory.converters.PDF
+        //   });
+  
+        //   conversion({ html }, function(err, result) {
+        //     if (err) {
+        //       return console.error(err);
+        //     }
+  
+        //     result.stream.pipe(
+        //       fs.createWriteStream(path.join(__dirname, "resume.pdf"))
+        //     );
+        //     conversion.kill();
+        //   });
+  
+        //   open(path.join(process.cwd(), "resume.pdf"));
+        // });
+    });
+  }
+  
+  init();
+  
