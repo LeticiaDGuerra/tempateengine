@@ -42,7 +42,7 @@ const questions = [
       {
       type: "input",
       message: "What is your ID #",
-      name: "ID"
+      name: "id"
     }
 ];
 function writeToFile(fileName, data) {
@@ -51,7 +51,7 @@ function writeToFile(fileName, data) {
   
   function init() {
     inquirer.prompt(questions).then(({}) => {
-      console.log(questions[0]);
+      console.log(questions[0].name);
   
     //   api
     //     .getUser(github)
