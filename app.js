@@ -1,4 +1,6 @@
+var fs = require('fs')
 const inquirer = require("inquirer");
+const create = require("create-html")
 const HTML= require("./lib/generateHTML")
 
 const questions = [
@@ -45,9 +47,18 @@ const questions = [
       name: "id"
     }
 ];
-function writeToFile(fileName, data) {
-    return fs.writeFileSync(path.join(process.cwd(), fileName), data);
-  }
+
+
+var make = create({
+  script: ["generateHTML.js"]
+})
+fs.writeFile('index.html', make, function (err) {
+  if (err) console.log(err)
+})
+
+// function writeToFile(fileName, data) {
+//     return fs.writeFileSync(path.join(process.cwd(), fileName), data);
+//   }
   
   function init() {
     inquirer.prompt(questions).then(({}) => {
