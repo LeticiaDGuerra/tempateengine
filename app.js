@@ -1,7 +1,10 @@
 var fs = require('fs')
 const inquirer = require("inquirer");
-const create = require("create-html")
 const HTML= require("./lib/generateHTML")
+const convertFactory = require("electron-html-to");
+
+
+
 
 const questions = [
     {
@@ -49,52 +52,52 @@ const questions = [
 ];
 
 
-var make = create({
-  script: ["generateHTML.js"]
-})
-fs.writeFile('index.html', make, function (err) {
-  if (err) console.log(err)
-})
+function writeToFile(fileName, data) {
+  return fs.writeFileSync(path.join(process.cwd(), fileName), data);
+}
 
-// function writeToFile(fileName, data) {
-//     return fs.writeFileSync(path.join(process.cwd(), fileName), data);
-//   }
-  
-  function init() {
-    inquirer.prompt(questions).then(({}) => {
-      console.log(questions[0].name);
-  
-    //   api
-    //     .getUser(github)
-    //     .then(response =>
-    //       api.getTotalStars(github).then(stars => {
-    //         return generateHTML({
-    //           stars,
-    //           color,
-    //           ...response.data
-    //         });
-    //       })
-    //     )
-        // .then(html => {
-        //   const conversion = convertFactory({
-        //     converterPath: convertFactory.converters.PDF
-        //   });
-  
-        //   conversion({ html }, function(err, result) {
-        //     if (err) {
-        //       return console.error(err);
-        //     }
-  
-        //     result.stream.pipe(
-        //       fs.createWriteStream(path.join(__dirname, "resume.pdf"))
-        //     );
-        //     conversion.kill();
-        //   });
-  
-        //   open(path.join(process.cwd(), "resume.pdf"));
-        // });
-    });
-  }
-  
-  init();
-  
+function init() {
+  inquirer.prompt(questions).then(({ github, school, id, office, role, username, ID, email }) => {
+    console.log(questions[0]);
+
+    HTML
+      .getUser("username")
+      .then(response =>
+        HTML.getTotalStars().then(stars => {
+          return generateHTML({
+            stars,
+            color,
+            github,
+            school,
+            id, 
+            office,
+            role, 
+            username, 
+            ID, 
+            email,
+            ...response.data
+          });
+        })
+      )
+      .then(html => {
+        const conversion = convertFactory({
+          converterPath: convertFactory.converters.html
+        });
+
+        conversion({ html }, function(err, result) {
+          if (err) {
+            return console.error(err);
+          }
+
+          result.stream.pipe(
+            fs.createWriteStream(path.join(__dirname, "index.html"))
+          );
+          conversion.kill();
+        });
+
+        open(path.join(process.cwd(), "index.html"));
+      });
+  });
+} 
+
+init();
