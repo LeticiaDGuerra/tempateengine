@@ -1,12 +1,13 @@
-var fs = require('fs')
+const util = require("util");
+const fs = require('fs')
 const inquirer = require("inquirer");
 const HTML= require("./lib/generateHTML")
-const convertFactory = require("electron-html-to");
+const jest = require("jest");
+const writeFileAsync = util.promisify(fs.writeFile)
 
 
-
-
-const questions = [
+function prompt() {
+   return inquirer.prompt([
     {
       type: "input",
       message: "What is your name?",
@@ -49,55 +50,20 @@ const questions = [
       message: "What is your ID #",
       name: "id"
     }
-];
-
-
-function writeToFile(fileName, data) {
-  return fs.writeFileSync(path.join(process.cwd(), fileName), data);
+]);
 }
 
-function init() {
-  inquirer.prompt(questions).then(({ github, school, id, office, role, username, ID, email }) => {
-    console.log(questions[0]);
 
-    HTML
-      .getUser("username")
-      .then(response =>
-        HTML.getTotalStars().then(stars => {
-          return generateHTML({
-            stars,
-            color,
-            github,
-            school,
-            id, 
-            office,
-            role, 
-            username, 
-            ID, 
-            email,
-            ...response.data
-          });
-        })
-      )
-      .then(html => {
-        const conversion = convertFactory({
-          converterPath: convertFactory.converters.html
-        });
+   function init() {
+      try {
+        const data = await prompt();
 
-        conversion({ html }, function(err, result) {
-          if (err) {
-            return console.error(err);
-          }
+        const html = HTML(data);
 
-          result.stream.pipe(
-            fs.createWriteStream(path.join(__dirname, "index.html"))
-          );
-          conversion.kill();
-        });
-
-        open(path.join(process.cwd(), "index.html"));
-      });
-  });
-} 
-
-init();
+        await writeFileAsync("employee.html", html);
+      }
+      catch (err) {
+        console.log(err)
+      }
+    }
+    init();
